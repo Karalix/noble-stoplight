@@ -676,7 +676,13 @@ app.get('/ws/:id', function(request, response) {
           //console.log(`${wsUrl}${post.querySelector('img').getAttribute('src')}`)
         }
         if (post.classList.contains('gallerypost')) {
-          postObj.img = `${wsUrl}/${post.querySelector('img').getAttribute('src')}`
+          //getAttribute of Null !
+          const imgElement = post.querySelector('img')
+          if (imgElement) {
+            postObj.img = `${wsUrl}/${post.querySelector('img').getAttribute('src')}`
+          } else {
+            continue
+          }
         }
         if (post.classList.contains('videopost')) {
           postObj.vid = `${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('video').getAttribute('src')}`
