@@ -679,7 +679,7 @@ app.get('/ws/:id', function(request, response) {
           //getAttribute of Null !
           const imgElement = post.querySelector('img')
           if (imgElement) {
-            postObj.img = `${wsUrl}/${post.querySelector('img').getAttribute('src')}`
+            postObj.img = `${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('img').getAttribute('src')}`
           } else {
             continue
           }
