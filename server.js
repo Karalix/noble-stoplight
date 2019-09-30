@@ -137,7 +137,7 @@ app.get('/series/lbv2', function(request, response) {
 });
 
 app.get('/series/aav2', function(request, response) {
-  const wsUrl = `https://placed.cc.au.dk/AWdnhqEyh5/`;
+  const wsUrl = `https://placed.cc.au.dk/socDVMqEj/`;
   fetch(`${wsUrl}?raw`)
     .then(res => res.text())
     .then(html => {
@@ -222,7 +222,7 @@ app.get('/event-lb/:id', function(request, response) {
 
 app.get('/event-aa/:id', function(request, response) {
   const eventId = request.params.id
-  const wsUrl = `https://placed.cc.au.dk/AWdnhqEyh5/`;
+  const wsUrl = `https://placed.cc.au.dk/socDVMqEj/`;
   let rullinger = eventId === 'event-90770bb157c62268ed9e'
   let rullinger_dates = []
   fetch(`${wsUrl}?raw`)
@@ -679,7 +679,7 @@ app.get('/ws/:id', function(request, response) {
           //getAttribute of Null !
           const imgElement = post.querySelector('img')
           if (imgElement) {
-            postObj.img = `${wsUrl}/${post.querySelector('img').getAttribute('src')}`
+            postObj.img = `${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('img').getAttribute('src')}`
           } else {
             continue
           }
