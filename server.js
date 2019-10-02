@@ -803,11 +803,14 @@ app.get('/ws2/:id', function(request, response) {
               place_name: event.querySelector(`.meta .location`).innerHTML
             })
           }
-        
         //let dataid = event.getAttribute('data-id')
         let eventTime = parseInt(event.querySelector(`.meta .time div`).getAttribute('data-start'))
         
         for(const post of event.querySelectorAll('.post.exported')) {
+          if(post.classList.contains('deleted')) {
+            continue
+          }
+          
         let postObj = {
           id: post.querySelector('.caption').getAttribute('__wid'),
           author: entities.decode(post.querySelector('.name').innerHTML),
