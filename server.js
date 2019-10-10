@@ -110,7 +110,7 @@ app.get('/upcoming/:placeId', function(request, response) {
 });
 
 app.get('/series/lbv2', function(request, response) {
-  const wsUrl = `https://placed.cc.au.dk/_7sFWnl66Y/`;
+  const wsUrl = `https://placed.cc.au.dk/Ai1-BmJJPK/`;
   fetch(`${wsUrl}?raw`)
     .then(res => res.text())
     .then(html => {
@@ -828,9 +828,12 @@ app.get('/ws2/:id', function(request, response) {
         if (post.classList.contains('gallerypost')) {
           //getAttribute of Null !
           const imgElement = post.querySelector('img')
+          const vidElement = post.querySelector('video')
           if (imgElement) {
             let imgUrl = post.querySelector('img').getAttribute('src').match(/(\/.+\/)?(.+\.(jpg|png))/)[2]
             postObj.img = `${wsUrl}/${imgUrl}`
+          } else if (vidElement) {
+            postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src')}`
           } else {
             continue
           }
