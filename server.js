@@ -833,13 +833,13 @@ app.get('/ws2/:id', function(request, response) {
             let imgUrl = post.querySelector('img').getAttribute('src').match(/(\/.+\/)?(.+\.(jpg|png))/)[2]
             postObj.img = `${wsUrl}/${imgUrl}`
           } else if (vidElement) {
-            postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src')}`
+            postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src').match(/(\/.+\/)?(.+\.(mov|MOV|MP4|mp4))/)[2]}`
           } else {
             continue
           }
         }
         if (post.classList.contains('videopost')) {
-          postObj.vid = `${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('video').getAttribute('src')}`
+          postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src').match(/(\/.+\/)?(.+\.(mov|MOV|MP4|mp4))/)[2]}`
         }
         if (post.classList.contains('multiplechoicepost')) {
           postObj.poll = []
