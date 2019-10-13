@@ -781,7 +781,7 @@ app.get('/ws2/:id', function(request, response) {
             event_title: event.querySelector(`.meta .title`).innerHTML,
             event_ss_titre:'',
             event_description_courte:'',
-            event_description: entities.decode(event.querySelector(`.meta .description`).innerHTML),
+            event_description: entities.decode(event.querySelector(`.meta .description`).innerHTML).replace(/<a/g, '<span').replace(/<\/a>/g, '</span>'),
             event_mere:'0',
             event_programme:'0',
             event_url:'https://krlx.fr',
