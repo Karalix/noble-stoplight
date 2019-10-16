@@ -857,10 +857,10 @@ app.get('/ws2/:id', function(request, response) {
         //console.log(eventTime)
         for(const book of event.querySelectorAll(`.book.exported`)) {
           //console.log(eventTime)
-          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?\/.+\/(.*\.(jpg|png))?.+\);/gm
+          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
           let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
           if(imgUrl) {
-            imgUrl = imgUrl[2]
+            imgUrl = imgUrl[3]
             //console.log(imgUrl)
           } 
           
@@ -891,10 +891,10 @@ app.get('/ws2/:id', function(request, response) {
         
         for(const book of event.querySelectorAll(`.bookshelf.exported .book`)) {
           //console.log(eventTime)
-          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?\/.+\/(.*\.(jpg|png))?.+\);/gm
+          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
           let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
           if(imgUrl) {
-            imgUrl = imgUrl[2]
+            imgUrl = imgUrl[3]
             //console.log(imgUrl)
           }
           if (!imgUrl) { // Here, the == is intentional
