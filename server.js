@@ -804,7 +804,14 @@ app.get('/ws2/:id', function(request, response) {
             })
           }
         //let dataid = event.getAttribute('data-id')
-        let eventTime = parseInt(event.querySelector(`.meta .time div`).getAttribute('data-start'))
+        let timeEl = event.querySelector(`.meta .time div`)
+        let eventTime
+        if(timeEl) {
+          eventTime = parseInt(event.querySelector(`.meta .time div`).getAttribute('data-start'))
+        } else {
+          eventTime = 0
+        }
+        
         
         for(const post of event.querySelectorAll('.post.exported')) {
           if(post.classList.contains('deleted')) {
