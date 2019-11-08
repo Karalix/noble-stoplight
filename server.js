@@ -759,176 +759,200 @@ app.get('/ws/:id', function(request, response) {
 
 
 app.get('/ws2/:id', function(request, response) {
-  const wsUrl = `${decodeURIComponent(request.params.id)}/`;
-  fetch(`${wsUrl}?raw`)
-    .then(res => res.text())
-    .then(html => {
-      let respObj = {
-        events: []
-      }
-      const { document } = (new JSDOM(html)).window
-      
-    
-      for(const event of document.querySelectorAll('.event')) {
-        let eventObj = {
-          eventdata: {},
-          books: [],
-          posts: []
-        }
-        const eventId = event.getAttribute('data-id')
-          eventObj.eventdata = {
-            event_id: eventId,
-            event_title: event.querySelector(`.meta .title`).innerHTML,
-            event_ss_titre:'',
-            event_description_courte:'',
-            event_description: entities.decode(event.querySelector(`.meta .description`).innerHTML).replace(/<a/g, '<span').replace(/<\/a>/g, '</span>'),
-            event_mere:'0',
-            event_programme:'0',
-            event_url:'https://krlx.fr',
-            dates: [],
-            image_url:event.querySelector(`.meta .image`).getAttribute('data-url'),
-            partenaire:[
-            ]
+  let respObj = {
+    events: []
+  }
+  let wsUrls = []
+  let requests = []
+  switch (request.params.id) {
+    case 'aa': 
+      wsUrls.push('https://placed.cc.au.dk/socDVMqEj/')
+      wsUrls.push('https://placed.cc.au.dk/KQr85-zj0D/')
+      break
+    case 'lb':
+      wsUrls.push('https://placed.cc.au.dk/Ai1-BmJJPK/')
+      break
+    case 'mm':
+      wsUrls.push('https://placed.cc.au.dk/VHClr_IugX/')
+      break
+    case 'atable':
+      wsUrls.push('https://placed.cc.au.dk/Y2p7kat0Vu/')
+      break
+  }
+  
+  //const wsUrl = `${decodeURIComponent(request.params.id)}/`
+  for (const wsUrl of wsUrls) {
+    requests.push(fetch(`${wsUrl}?raw`)
+      .then(res => res.text())
+      .then(html => {
+        const { document } = (new JSDOM(html)).window
+
+        for(const event of document.querySelectorAll('.event')) {
+          let eventObj = {
+            eventdata: {},
+            books: [],
+            posts: []
           }
-          
-          for (const div of event.querySelectorAll('.meta .time div')) {
-            let dateStart = (new Date(parseInt(div.getAttribute('data-start'))))
-            let dateEnd = (new Date(parseInt(div.getAttribute('data-end'))))
-            eventObj.eventdata.dates.push({
-              date_id: `${dateStart.toISOString()}-${eventId}-date`,
-              date_start: dateStart.toISOString(),
-              date_end: dateEnd.toISOString(),
+          const eventId = event.getAttribute('data-id')
+            eventObj.eventdata = {
               event_id: eventId,
-              place_id: 'lundby-summer',
-              place_name: event.querySelector(`.meta .location`).innerHTML
-            })
-          }
-        //let dataid = event.getAttribute('data-id')
-        let timeEl = event.querySelector(`.meta .time div`)
-        let eventTime
-        if(timeEl) {
-          eventTime = parseInt(event.querySelector(`.meta .time div`).getAttribute('data-start'))
-        } else {
-          eventTime = 0
-        }
-        
-        
-        for(const post of event.querySelectorAll('.post.exported')) {
-          if(post.classList.contains('deleted')) {
+              event_title: event.querySelector(`.meta .title`).innerHTML,
+              event_ss_titre:'',
+              event_description_courte:'',
+              event_description: entities.decode(event.querySelector(`.meta .description`).innerHTML).replace(/<a/g, '<span').replace(/<\/a>/g, '</span>'),
+              event_mere:'0',
+              event_programme:'0',
+              event_url:'https://krlx.fr',
+              dates: [],
+              image_url:event.querySelector(`.meta .image`).getAttribute('data-url'),
+              partenaire:[
+              ]
+            }
+
+            for (const div of event.querySelectorAll('.meta .time div')) {
+              let dateStart = (new Date(parseInt(div.getAttribute('data-start'))))
+              let dateEnd = (new Date(parseInt(div.getAttribute('data-end'))))
+              eventObj.eventdata.dates.push({
+                date_id: `${dateStart.toISOString()}-${eventId}-date`,
+                date_start: dateStart.toISOString(),
+                date_end: dateEnd.toISOString(),
+                event_id: eventId,
+                place_id: 'lundby-summer',
+                place_name: event.querySelector(`.meta .location`).innerHTML
+              })
+            }
+          //let dataid = event.getAttribute('data-id')
+          let timeEl = event.querySelector(`.meta .time div`)
+          let eventTime
+          if(timeEl) {
+            eventTime = parseInt(event.querySelector(`.meta .time div`).getAttribute('data-start'))
+          } else {
+            // Event with no Time ? Eww continue !
+            console.log('Event with no time : skipped')
             continue
           }
-          
-        let postObj = {
-          id: post.querySelector('.caption').getAttribute('__wid'),
-          author: entities.decode(post.querySelector('.name').innerHTML),
-          text: entities.decode(post.querySelector('.caption').innerHTML),
-          librarian: post.querySelector('.creator >span') ? true : false,
-          time: post.querySelector('.timestamp').getAttribute('data-timestamp')
-        }
-        
-        if (post.classList.contains('imagepost')) {
-          //console.log(`${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('img').getAttribute('src')}`)
-          let imgUrl = post.querySelector('img').getAttribute('src').match(/(\/.+\/)?(.+\.(jpg|png))/)[2]
-          postObj.img = `${wsUrl}/${imgUrl}`
-          //console.log(`${wsUrl}${post.querySelector('img').getAttribute('src')}`)
-        }
-        if (post.classList.contains('gallerypost')) {
-          //getAttribute of Null !
-          const imgElement = post.querySelector('img')
-          const vidElement = post.querySelector('video')
-          if (imgElement) {
+
+
+          for(const post of event.querySelectorAll('.post.exported')) {
+            if(post.classList.contains('deleted')) {
+              continue
+            }
+
+          let postObj = {
+            id: post.querySelector('.caption').getAttribute('__wid'),
+            author: entities.decode(post.querySelector('.name').innerHTML),
+            text: entities.decode(post.querySelector('.caption').innerHTML),
+            librarian: post.querySelector('.creator >span') ? true : false,
+            time: post.querySelector('.timestamp').getAttribute('data-timestamp')
+          }
+
+          if (post.classList.contains('imagepost')) {
+            //console.log(`${wsUrl.match(/(https?:\/\/[a-z\.]*)\/.*/)[1]}/${post.querySelector('img').getAttribute('src')}`)
             let imgUrl = post.querySelector('img').getAttribute('src').match(/(\/.+\/)?(.+\.(jpg|png))/)[2]
             postObj.img = `${wsUrl}/${imgUrl}`
-          } else if (vidElement) {
+            //console.log(`${wsUrl}${post.querySelector('img').getAttribute('src')}`)
+          }
+          if (post.classList.contains('gallerypost')) {
+            //getAttribute of Null !
+            const imgElement = post.querySelector('img')
+            const vidElement = post.querySelector('video')
+            if (imgElement) {
+              let imgUrl = post.querySelector('img').getAttribute('src').match(/(\/.+\/)?(.+\.(jpg|png))/)[2]
+              postObj.img = `${wsUrl}/${imgUrl}`
+            } else if (vidElement) {
+              postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src').match(/(\/.+\/)?(.+\.(mov|MOV|MP4|mp4))/)[2]}`
+            } else {
+              continue
+            }
+          }
+          if (post.classList.contains('videopost')) {
             postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src').match(/(\/.+\/)?(.+\.(mov|MOV|MP4|mp4))/)[2]}`
-          } else {
-            continue
           }
-        }
-        if (post.classList.contains('videopost')) {
-          postObj.vid = `${wsUrl}/${post.querySelector('video').getAttribute('src').match(/(\/.+\/)?(.+\.(mov|MOV|MP4|mp4))/)[2]}`
-        }
-        if (post.classList.contains('multiplechoicepost')) {
-          postObj.poll = []
-          for (const choice of post.querySelectorAll('.choice')) {
-            postObj.poll.push({
-              answer: choice.querySelector('.answer').innerHTML,
-              votes: parseInt(choice.getAttribute('data-votes'))
-            })
-          }
-        }
-        
-        eventObj.posts.push(postObj)
-      }
-        
-        //console.log(eventTime)
-        for(const book of event.querySelectorAll(`.book.exported`)) {
-          //console.log(eventTime)
-          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
-          let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
-          if(imgUrl) {
-            imgUrl = imgUrl[3]
-            //console.log(imgUrl)
-          } 
-          
-          if (!imgUrl) { // Here, the == is intentional
-            imgUrl = 'no-cover-book-01.jpg'
-          }
-          
-          
-          let bookObj = {}
-          try {
-          bookObj = {
-            isbn: entities.decode(book.querySelector('.isbn').innerHTML),
-            pid: entities.decode(book.querySelector('.pid').innerHTML),
-            title: entities.decode(book.querySelector('.title').innerHTML),
-            author: entities.decode(book.querySelector('.author').innerHTML),
-            date: entities.decode(book.querySelector('.release').innerHTML),
-            desc: entities.decode(book.querySelector('.description').innerHTML),
-            img: wsUrl+imgUrl,//wsUrl+entities.decode(book.querySelector('.pid').innerHTML).replace(':','-')+'.png'
-            eventTime: eventTime
-          }
-          } catch(e) {
-            console.log('Error while parsing a book element !')
-            console.log(book.innerHTML)
+          if (post.classList.contains('multiplechoicepost')) {
+            postObj.poll = []
+            for (const choice of post.querySelectorAll('.choice')) {
+              postObj.poll.push({
+                answer: choice.querySelector('.answer').innerHTML,
+                votes: parseInt(choice.getAttribute('data-votes'))
+              })
+            }
           }
 
-          eventObj.books.push(bookObj)
+          eventObj.posts.push(postObj)
         }
-        
-        for(const book of event.querySelectorAll(`.bookshelf.exported .book`)) {
+
           //console.log(eventTime)
-          let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
-          let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
-          if(imgUrl) {
-            imgUrl = imgUrl[3]
-            //console.log(imgUrl)
-          }
-          if (!imgUrl) { // Here, the == is intentional
-            imgUrl = 'no-cover-book-01.jpg'
-          }
-          let bookObj = {
-            isbn: entities.decode(book.querySelector('.isbn').innerHTML),
-            pid: entities.decode(book.querySelector('.pid').innerHTML),
-            title: entities.decode(book.querySelector('.title').innerHTML),
-            author: entities.decode(book.querySelector('.author').innerHTML),
-            date: entities.decode(book.querySelector('.release').innerHTML),
-            desc: entities.decode(book.querySelector('.description').innerHTML),
-            img: wsUrl+imgUrl,//wsUrl+entities.decode(book.querySelector('.pid').innerHTML).replace(':','-')+'.png'
-            eventTime: eventTime
+          for(const book of event.querySelectorAll(`.book.exported`)) {
+            //console.log(eventTime)
+            let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
+            let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
+            if(imgUrl) {
+              imgUrl = imgUrl[3]
+              //console.log(imgUrl)
+            } 
+
+            if (!imgUrl) { // Here, the == is intentional
+              imgUrl = 'no-cover-book-01.jpg'
+            }
+
+
+            let bookObj = {}
+            try {
+            bookObj = {
+              isbn: entities.decode(book.querySelector('.isbn').innerHTML),
+              pid: entities.decode(book.querySelector('.pid').innerHTML),
+              title: entities.decode(book.querySelector('.title').innerHTML),
+              author: entities.decode(book.querySelector('.author').innerHTML),
+              date: entities.decode(book.querySelector('.release').innerHTML),
+              desc: entities.decode(book.querySelector('.description').innerHTML),
+              img: wsUrl+imgUrl,//wsUrl+entities.decode(book.querySelector('.pid').innerHTML).replace(':','-')+'.png'
+              eventTime: eventTime
+            }
+            } catch(e) {
+              console.log('Error while parsing a book element !')
+              console.log(book.innerHTML)
+            }
+
+            eventObj.books.push(bookObj)
           }
 
-          eventObj.books.push(bookObj)
+          for(const book of event.querySelectorAll(`.bookshelf.exported .book`)) {
+            //console.log(eventTime)
+            let regexImgUrl = /url\("(https:\/\/.*\.au\.dk)?(\/.+\/)?(.+\.(jpg|png))?.+\);/gm
+            let imgUrl = regexImgUrl.exec(entities.decode(book.querySelector('.preview').getAttribute('style')))
+            if(imgUrl) {
+              imgUrl = imgUrl[3]
+              //console.log(imgUrl)
+            }
+            if (!imgUrl) { // Here, the == is intentional
+              imgUrl = 'no-cover-book-01.jpg'
+            }
+            let bookObj = {
+              isbn: entities.decode(book.querySelector('.isbn').innerHTML),
+              pid: entities.decode(book.querySelector('.pid').innerHTML),
+              title: entities.decode(book.querySelector('.title').innerHTML),
+              author: entities.decode(book.querySelector('.author').innerHTML),
+              date: entities.decode(book.querySelector('.release').innerHTML),
+              desc: entities.decode(book.querySelector('.description').innerHTML),
+              img: wsUrl+imgUrl,//wsUrl+entities.decode(book.querySelector('.pid').innerHTML).replace(':','-')+'.png'
+              eventTime: eventTime
+            }
+
+            eventObj.books.push(bookObj)
+          }
+          respObj.events.push(eventObj)
         }
-        respObj.events.push(eventObj)
-      }
-    
-      response.set('Content-Type', 'application/json')
-      response.send(respObj);
-    })
-  .catch(e => {
-    console.error(e)
+
+      })
+    .catch(e => {
+      console.error(e)
+    }))
+  }
+  Promise.all(requests).then((values) => {
+    response.set('Content-Type', 'application/json')
+    response.send(respObj);
   })
+  
 });
 
 // listen for requests :)
