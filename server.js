@@ -778,6 +778,9 @@ app.get('/ws2/:id', function(request, response) {
     case 'atable':
       wsUrls.push('https://placed.cc.au.dk/Y2p7kat0Vu/')
       break
+    case 'cap':
+      wsUrls.push('https://placed.cc.au.dk/42s-IRK8tE/')
+      break
   }
   
   //const wsUrl = `${decodeURIComponent(request.params.id)}/`
