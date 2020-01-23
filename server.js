@@ -779,7 +779,7 @@ app.get('/ws2/:id', function(request, response) {
       wsUrls.push('https://placed.cc.au.dk/Y2p7kat0Vu/')
       break
     case 'cap':
-      wsUrls.push('https://placed.cc.au.dk/42s-IRK8tE/')
+      wsUrls.push('https://placed.cc.au.dk/IpFz7FiAnj/')
       break
   }
   
