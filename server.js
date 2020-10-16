@@ -784,6 +784,9 @@ app.get('/ws2/:id', function(request, response) {
     case 'laca' :
       wsUrls.push('https://placed.cc.au.dk/26YPkBQmf/')
       break
+    case 'mus':
+      wsUrls.push('https://placed.cc.au.dk/S34CV91FT5/')
+      break
     case 'local' :
       wsUrls.push('https://placed.cc.au.dk/a8NmBOww5Y/')
       break
